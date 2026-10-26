@@ -1,4 +1,4 @@
-(defproject im.chit/ova "1.0.1"
+(defproject xyz.zcaudate/ova "1.0.1"
   :description "Stateful arrays for clojure"
   :url "http://github.com/zcaudate/ova"
   :license {:name "The MIT License"

@@ -12,7 +12,7 @@ stateful arrays for clojure
 
 Add to `project.clj`
 
-    [im.chit/ova "1.0.1"]
+    [xyz.zcaudate/ova "1.0.1"]
 
 Core operations are in `ova.core`; predicate selection and mutation are in
 `ova.select`.
