@@ -14,3 +14,9 @@ pom.xml.asc
 .DS_Store
 index.html
 api.html
+
+# Editor backups, autosaves, lock files, and undo history
+*.bak
+*~
+\#*#
+.\#*

@@ -3,10 +3,14 @@
   :url "http://github.com/zcaudate/ova"
   :license {:name "The MIT License"
             :url "http://http://opensource.org/licenses/MIT"}
-  :dependencies [[org.clojure/clojure "1.5.1"]
+  :java-cmd "/opt/homebrew/opt/openjdk/bin/java"
+  :dependencies [[org.clojure/clojure "1.12.6"]
                  [im.chit/hara "1.0.1"]]
-  :profiles {:dev {:dependencies [[midje "1.6.0"]]
-                   :plugins [[lein-midje "3.1.3"]]}}
+  :aliases {"test" ["run" "-m" "code.test"]
+            "manage" ["run" "-m" "code.manage"]}
+  :profiles {:dev {:dependencies [[xyz.zcaudate/code.test "4.1.8"]
+                                  [xyz.zcaudate/code.manage "4.1.8"]]}
+             :repl {:plugins [[cider/cider-nrepl "0.63.1"]]}}
   :documentation {:files {"doc/index"
                           {:input "test/midje_doc/ova_guide.clj"
                            :title "ova"
