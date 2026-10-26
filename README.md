@@ -14,7 +14,8 @@ Add to `project.clj`
 
     [im.chit/ova "1.0.1"]
 
-All functions are in the `ova.core` namespace. 
+Core operations are in `ova.core`; predicate selection and mutation are in
+`ova.select`.
 
 ### Documentation
 
@@ -22,23 +23,18 @@ See main site at:
 
 http://docs.caudate.me/ova/
 
-To generate this document for offline use: 
+Documentation uses `code.doc`, with source pages in `src-documentation/`
+and site configuration in `config/publish.edn`.
 
-  1. Clone this repository
-  
-    > git clone https://github.com/zcaudate/ova.git
-  
-  2. Install [lein-midje-doc](http://docs.caudate.me/lein-midje-doc). 
-  
-  3. Create `doc` folder
-      
-    > mkdir doc
+```sh
+lein docs-check  # validate pages and execute their examples
+lein docs        # check, initialise the theme, and build HTML
+```
 
-  4. Run in project folder
-  
-    > lein midje-doc
-
-The output will be generated in `doc/index.html`
+Open `doc/index.html` for the guide, API reference, and scoreboard example.
+The first build creates the theme in `template/ova/`; subsequent builds
+reuse it so local customisations are preserved. Generated HTML is ignored
+by Git. Documentation tooling and source paths are confined to the dev profile.
 
 ### Blog
 

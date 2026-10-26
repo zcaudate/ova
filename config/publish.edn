@@ -1,0 +1,18 @@
+{:template {:author "Chris Zheng"
+            :email "z@caudate.me"
+            :site "ova"
+            :site-label "Ova"
+            :tagline "Observable mutable arrays for Clojure"
+            :tracking-enabled "false"}
+ :sites {:ova {:theme "foundation"
+               :output "doc"
+               :pages {index {:base "home.html"
+                              :input "src-documentation/ova_documentation/guide.clj"
+                              :title "Ova"
+                              :subtitle "Observable mutable arrays for Clojure"}
+                       api {:input "src-documentation/ova_documentation/api.clj"
+                            :title "API reference"
+                            :subtitle "Core operations and predicate selection"}
+                       scoreboard {:input "src-documentation/ova_documentation/scoreboard.clj"
+                                   :title "Scoreboard example"
+                                   :subtitle "Updating player scores and observing changes"}}}}}

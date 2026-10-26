@@ -19,7 +19,7 @@
 
 (defprotocol IOvaWatch
   (-add-watch    [ova key type handler])
-  (-remove-watch [ova key type]))
+  (-remove-watch [ova key]))
 
 (defprotocol IOvaMutate
   (-push-item    [ova item])
@@ -96,22 +96,16 @@
   "pops an element from the ova"
   {:added "1.0"}
   [{:keys [data positions] :as ova}]
-  (let [vcontainer (volatile! nil)
-        ndata    (swap! data (fn [items]
-                               (cond (empty? items)
-                                     nil
-                                     
-                                     :else
-                                     (do (vreset! vcontainer (last items))
-                                         (pop items)))))
-        npositions  (swap! positions dissoc @vcontainer)
-        _ (when @vcontainer
-            (ova-watch-trigger ova
-                               (OvaEvent. :ova/pop
-                                          @vcontainer
-                                          (- (count @data) 2)
-                                          nil
-                                          @@vcontainer)))]
+  (let [[before _] (swap-vals! data #(if (empty? %) [] (pop %)))]
+    (when (seq before)
+      (let [container (peek before)]
+        (swap! positions dissoc container)
+        (ova-watch-trigger ova
+                           (OvaEvent. :ova/pop
+                                      container
+                                      (dec (count before))
+                                      nil
+                                      @container))))
     ova))
 
 (defn ova-item-update
@@ -135,7 +129,32 @@
                                           @vold-value))))
     ova))
 
-(defrecord Ova [data watches positions]
+(deftype Ova [data watches positions]
+
+  clojure.lang.ILookup
+  (valAt [ova key]
+    (.valAt ova key nil))
+  (valAt [_ key not-found]
+    (case key
+      :data data
+      :watches watches
+      :positions positions
+      not-found))
+
+  clojure.lang.Counted
+  (count [_] (count @data))
+
+  clojure.lang.Seqable
+  (seq [_] (seq (mapv deref @data)))
+
+  clojure.lang.Indexed
+  (nth [_ index]
+    @(nth @data index))
+  (nth [_ index not-found]
+    (let [items @data]
+      (if (< -1 index (count items))
+        @(nth items index)
+        not-found)))
   
   clojure.lang.IDeref
   (deref [ova] (mapv deref @data))
@@ -146,6 +165,10 @@
 
   (persistent [ova]
     (mapv deref @data))
+
+  clojure.lang.ITransientAssociative
+  (assoc [ova index item]
+    (ova-item-update ova index (fn [_] item)))
 
   clojure.lang.ITransientVector
   (assocN [ova index item]

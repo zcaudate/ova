@@ -14,6 +14,19 @@
       (v/ova-watch-remove :test/a))
   => {})
 
+^{:refer ova.core/-remove-watch :added "1.0"}
+(fact "removes a watch through the protocol using its key"
+  (let [ov (v/ova-new)
+        output (atom [])]
+    (v/-add-watch ov :removed :ova/push
+                  (fn [key _] (swap! output conj key)))
+    (v/-add-watch ov :retained :ova/push
+                  (fn [key _] (swap! output conj key)))
+    (v/-remove-watch ov :removed)
+    (v/-push-item ov 1)
+    [@output (set (keys @(:watches ov)))])
+  => [[:retained] #{:retained}])
+
 ^{:refer ova.core/ova-watch-add :added "1.0"}
 (fact "adds a watch"
 
@@ -81,7 +94,69 @@
                                                (swap! output conj (:old-value event))))
         _      (v/ova-item-pop ov)]
     [@output @ov])
-  => [[3] [1 2]])
+  => [[3] [1 2]]
+
+  (let [ov (v/ova-new)
+        output (atom [])]
+    (doseq [value [nil false 3]]
+      (v/ova-item-push ov value))
+    (let [containers @(:data ov)]
+      (v/ova-watch-add ov :pop :ova/pop
+                       (fn [_ event] (swap! output conj event)))
+      (dotimes [_ 5] (v/ova-item-pop ov))
+      (let [empty-state [@ov @(:positions ov) (vector? @(:data ov))]]
+        (conj! ov 10)
+        (conj! ov 20)
+        [(mapv #(select-keys % [:index :new-value :old-value]) @output)
+         (= (vec (reverse containers)) (mapv :container @output))
+         empty-state
+         @ov
+         (mapv @(:positions ov) @(:data ov))])))
+  => [[{:index 2 :new-value nil :old-value 3}
+       {:index 1 :new-value nil :old-value false}
+       {:index 0 :new-value nil :old-value nil}]
+      true [[] {} true] [10 20] [0 1]])
+
+^{:refer ova.core/->Ova :added "1.0"}
+(fact "count, seq, and nth operate on element values"
+  (let [ov (v/ova-new)]
+    [(count ov) (seq ov)
+     (nth ov 0 :missing)
+     (get ov :unknown :missing)])
+  => [0 nil :missing :missing]
+
+  (let [ov (v/ova-new)]
+    (doseq [value [nil false 3]]
+      (conj! ov value))
+    [(count ov)
+     (seq ov)
+     (mapv identity (seq ov))
+     (reduce (fn [n _] (inc n)) 0 ov)
+     (first ov)
+     (last ov)
+     (nth ov 0 :missing)
+     (nth ov 1 :missing)
+     (nth ov 2)
+     (nth ov -1 :missing)
+     (nth ov 3 :missing)
+     (every? some? [(:data ov) (:watches ov) (:positions ov)])])
+  => [3 [nil false 3] [nil false 3] 3 nil 3 nil false 3
+      :missing :missing true]
+
+  (nth (v/ova-new) 0)
+  => (throws IndexOutOfBoundsException)
+
+  (nth (v/ova-new) -1)
+  => (throws IndexOutOfBoundsException)
+
+  (let [ov (v/ova-new)]
+    (conj! ov 1)
+    (conj! ov 2)
+    (let [snapshot (seq ov)]
+      (assoc! ov 0 10)
+      (pop! ov)
+      [snapshot (seq ov) (count ov) (nth ov 0) (persistent! ov)]))
+  => [[1 2] [10] 1 10 [10]])
 
 ^{:refer ova.core/ova-item-update :added "1.0"}
 (fact "updates an element in the ova"

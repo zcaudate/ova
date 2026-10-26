@@ -7,14 +7,12 @@
   :dependencies [[org.clojure/clojure "1.12.6"]
                  [im.chit/hara "1.0.1"]]
   :aliases {"test" ["run" "-m" "code.test"]
-            "manage" ["run" "-m" "code.manage"]}
+            "manage" ["run" "-m" "code.manage"]
+            "docs" ["run" "-m" "ova-documentation.build"]
+            "docs-check" ["run" "-m" "ova-documentation.build" "check"]}
   :profiles {:dev {:dependencies [[xyz.zcaudate/code.test "4.1.8"]
-                                  [xyz.zcaudate/code.manage "4.1.8"]]}
+                                  [xyz.zcaudate/code.manage "4.1.8"]
+                                  [xyz.zcaudate/code.doc "4.1.8"]]
+                   :source-paths ["src-documentation"]}
              :repl {:plugins [[cider/cider-nrepl "0.63.1"]]}}
-  :documentation {:files {"doc/index"
-                          {:input "test/midje_doc/ova_guide.clj"
-                           :title "ova"
-                           :sub-title "stateful arrays for clojure"
-                           :author "Chris Zheng"
-                           :email  "z@caudate.me"
-                           :tracking "UA-31320512-2"}}})
+  :publish "config/publish.edn")
