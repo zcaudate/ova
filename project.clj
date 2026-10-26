@@ -7,8 +7,7 @@
                  (when-let [java-home (System/getenv "JAVA_HOME")]
                    (str java-home "/bin/java"))
                  "/opt/homebrew/opt/openjdk/bin/java")
-  :dependencies [[org.clojure/clojure "1.12.6"]
-                 [im.chit/hara "1.0.1"]]
+  :dependencies [[org.clojure/clojure "1.12.6"]]
   :aliases {"test" ["run" "-m" "code.test"]
             "manage" ["run" "-m" "code.manage"]
             "docs" ["run" "-m" "ova-documentation.build"]

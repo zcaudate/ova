@@ -27,7 +27,7 @@ jobs:
           cache-dependency-path: project.clj
 
       - name: Set up Leiningen
-        uses: DeLaGuardo/setup-clojure@13.7
+        uses: DeLaGuardo/setup-clojure@13.7.0
         with:
           lein: 2.13.0
 
