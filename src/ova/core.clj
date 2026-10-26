@@ -44,16 +44,22 @@
 
 
 (defn ova-watch-remove
+  "removes a watch"
+  {:added "1.0"}
   [ova key]
   (let [{:keys [watches]} ova]
     (swap! watches dissoc key)))
 
 (defn ova-watch-add
+  "adds a watch"
+  {:added "1.0"}
   [ova key type handler]
   (let [{:keys [watches]} ova]
     (swap! watches assoc key {:type type :handler handler})))
 
 (defn ova-watch-trigger
+  "triggers a watch"
+  {:added "1.0"}
   [{:keys [watches] :as ova} {:keys [type] :as event}]
   (let [active (filter (fn [[key watch]]
                          (= type (:type watch)))
@@ -63,6 +69,8 @@
       (handler key event))))
 
 (defn ova-index-make
+  "makes an array index"
+  {:added "1.0"}
   [data]
   (reduce (fn [m [i e]]
             (assoc m e i))
@@ -70,6 +78,8 @@
           (map-indexed vector data)))
 
 (defn ova-item-push
+  "pushes an element into the ova"
+  {:added "1.0"}
   [{:keys [data positions] :as ova} item]
   (let [container  (atom item)
         ndata      (swap! data  conj  container)
@@ -83,6 +93,8 @@
     ova))
 
 (defn ova-item-pop
+  "pops an element from the ova"
+  {:added "1.0"}
   [{:keys [data positions] :as ova}]
   (let [vcontainer (volatile! nil)
         ndata    (swap! data (fn [items]
@@ -103,6 +115,8 @@
     ova))
 
 (defn ova-item-update
+  "updates an element in the ova"
+  {:added "1.0"}
   [{:keys [data positions] :as ova} index f]
   (let [vold-value  (volatile! nil) 
         container   (get @data index)]
@@ -154,6 +168,8 @@
     (ova-item-pop ova)))
 
 (defn ova-new
+  "creates a new ova"
+  {:added "1.0"}
   []
   (Ova. (atom [])
         (atom {})
