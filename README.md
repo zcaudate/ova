@@ -2,7 +2,7 @@
 
 stateful arrays for clojure
 
-[![Build Status](https://travis-ci.org/zcaudate/ova.png?branch=master)](https://travis-ci.org/zcaudate/ova)
+[![Publish documentation](https://github.com/zcaudate/ova/actions/workflows/docs.yml/badge.svg)](https://github.com/zcaudate/ova/actions/workflows/docs.yml)
 
 ## DEPRECATION NOTICE
 
@@ -21,7 +21,7 @@ Core operations are in `ova.core`; predicate selection and mutation are in
 
 See main site at:
 
-http://docs.caudate.me/ova/
+https://zcaudate.github.io/ova/
 
 Documentation uses `code.doc`, with source pages in `src-documentation/`
 and site configuration in `config/publish.edn`.
@@ -35,6 +35,15 @@ Open `doc/index.html` for the guide, API reference, and scoreboard example.
 The first build creates the theme in `template/ova/`; subsequent builds
 reuse it so local customisations are preserved. Generated HTML is ignored
 by Git. Documentation tooling and source paths are confined to the dev profile.
+
+The `Publish documentation` GitHub Actions workflow runs tests and builds the
+site with Java 27. Pushes to `master` publish the generated `doc/` directory
+to GitHub Pages; pull requests build and check the site without deploying it.
+You can also run the workflow manually from the Actions tab.
+
+In repository **Settings → Pages → Build and deployment**, set **Source** to
+**GitHub Actions**. The workflow uses GitHub's automatic token and does not
+require a personal access token.
 
 ### Blog
 

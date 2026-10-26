@@ -1,0 +1,73 @@
+name: Publish documentation
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Java 27
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '27'
+          cache: maven
+          cache-dependency-path: project.clj
+
+      - name: Set up Leiningen
+        uses: DeLaGuardo/setup-clojure@13.7
+        with:
+          lein: 2.13.0
+
+      - name: Run tests
+        run: lein test :with '[ova]'
+
+      - name: Check examples and build documentation
+        run: lein docs
+
+      - name: Verify generated website
+        run: |
+          test -s doc/index.html
+          test -s doc/api.html
+          test -s doc/scoreboard.html
+          test -s doc/css/foundation.css
+          test -s doc/js/highlight.min.js
+
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: doc
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Publish website
+        id: deployment
+        uses: actions/deploy-pages@v5

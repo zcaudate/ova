@@ -3,7 +3,10 @@
   :url "http://github.com/zcaudate/ova"
   :license {:name "The MIT License"
             :url "http://http://opensource.org/licenses/MIT"}
-  :java-cmd "/opt/homebrew/opt/openjdk/bin/java"
+  :java-cmd ~(or (System/getenv "JAVA_CMD")
+                 (when-let [java-home (System/getenv "JAVA_HOME")]
+                   (str java-home "/bin/java"))
+                 "/opt/homebrew/opt/openjdk/bin/java")
   :dependencies [[org.clojure/clojure "1.12.6"]
                  [im.chit/hara "1.0.1"]]
   :aliases {"test" ["run" "-m" "code.test"]
